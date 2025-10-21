@@ -4,6 +4,7 @@ const cors=require('cors');
 const app=express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('dist'))
 morgan.token('person',(req)=>{
     if(req.method === 'POST' && req.body.name && req.body.number){
         return JSON.stringify({name:req.body.name,number:req.body.number})
@@ -72,7 +73,7 @@ app.post('/api/persons',(req,res)=>{
     persons=persons.concat(person);
      res.json(person);
 })
-const PORT=3001;
+const PORT=process.env.PORT || 3001;
 app.listen(PORT,()=>{
     console.log("running on port 3001");
 })
