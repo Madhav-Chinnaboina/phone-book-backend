@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express=require('express');
 var morgan = require('morgan');
+const Phone = require('./models/phone');
 const cors=require('cors');
 const app=express();
 app.use(cors());
@@ -12,68 +14,77 @@ morgan.token('person',(req)=>{
     return ''
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person'));
-let persons=[
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-];
-app.get('/api/persons',(req,res)=>{
-    res.json(persons)
+app.get('/api/persons',(req,res,next)=>{
+    Phone.find({}).then(results=>{
+        
+            res.json(results);
+        
+    })
+    .catch(error=>next(error))
 })
 app.get('/info',(req,res)=>{
-    const len=persons.length;
-    const time=new Date();
-   res.send(`<div><p>phonebook has info for ${len} </p>
-    <p>${time}</p>
-    </div>`)
+    Phone.countDocuments({}).then(count=>{
+        const time=new Date();
+        res.send(`<div><p>phonebook has info for ${count} </p>
+            <p>${time}</p>
+            </div>`)
+    })
+    
 })
-app.get('/api/persons/:id',(req,res)=>{
+app.get('/api/persons/:id',(req,res,next)=>{
     const id = req.params.id;
-    const note = persons.find(person=>person.id===id);
-    if(note) res.json(note);
-    else res.status(404).end()
+    Phone.findById(id).then(phone=>{
+        res.json(phone);
+    })
+    .catch(error=>next(error))
 })
-app.delete('/api/persons/:id',(req,res)=>{
+app.delete('/api/persons/:id',(req,res,next)=>{
     const id=req.params.id;
-    persons=persons.filter(note=>note.id!==id);
-    res.status(204).end();
+    Phone.findByIdAndDelete(id).then((result)=>{
+        res.status(204).end();
+    })
+    .catch(error=>next(error))
 })
-app.post('/api/persons',(req,res)=>{
+app.post('/api/persons',(req,res,next)=>{
     const person = req.body;
-    const id=Math.floor(Math.random()*999)
-    person.id=id.toString();
      if(!person.name || !person.number){
         return res.status(400).json({ 
             error: 'name or number is missing' 
           })
      }
-        const duplicate=persons.find(p=>p.name===person.name);
-        if(duplicate){
-            return res.status(400).json({
-                error:'name must be unique'
-            })
-        }
-    persons=persons.concat(person);
-     res.json(person);
+     const phone = new Phone({
+        name:person.name,
+        number:person.number,
+     })
+     phone.save().then(result=>{
+        res.json(result)
+     }).catch(error=>next(error))
 })
-const PORT=process.env.PORT || 3001;
+app.put('/api/persons/:id',(req,res,next)=>{
+    const id=req.params.id;
+    const {number}=req.body;
+    Phone.findByIdAndUpdate(id,{number},
+        { new: true, runValidators: true, context: 'query' })
+        .then(result=>{
+        if(!result){
+            return res.status(404).end()
+        }
+            res.json(result)
+    })
+    .catch(error=>next(error))
+})
+const errorHandlers = (error,req,res,next)=>{
+    console.log(error.message)
+    if(error.name === 'CastError'){
+        return res.status(400).end()
+    }
+    else if(error.name === 'validationError'){
+        return res.status(400).send({error:error.message})
+    }
+    next(error)
+}
+app.use(errorHandlers)
+const PORT=process.env.PORT;
 app.listen(PORT,()=>{
-    console.log("running on port 3001");
+    console.log(`running on port ${PORT}`);
 })

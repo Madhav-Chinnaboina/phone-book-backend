@@ -1,11 +1,26 @@
 ### Delete a person
-DELETE http://localhost:3001/api/persons/2
+DELETE http://localhost:3001/api/persons/68f9ebfcf7fd88b93e5fcd2b
 
 ###
-POST http://localhost:3001/api/persons
+POST  http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "number": "123-456-7890"
+  "name": "ma",
+  "number": "12"
+}
+
+### Get all persons
+GET http://localhost:3001/api/persons
+
+### Get all persons id
+GET http://localhost:3001/api/persons/68f9e94005e90cd45f00d2d1
+
+### update a person
+PUT  http://localhost:3001/api/persons/68fa25937b7756316435bd1e
+Content-Type: application/json
+
+{
+  
+  "number": "987-65411"
 }
