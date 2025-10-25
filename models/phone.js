@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
 const url = process.env.MONGODB_URI
 
@@ -32,4 +32,4 @@ phoneSchema.set('toJSON', {
   },
 })
 
-export default mongoose.model('Phone', phoneSchema)
+module.exports = mongoose.model('Phone', phoneSchema)
