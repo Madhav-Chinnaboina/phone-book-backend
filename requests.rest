@@ -1,23 +1,23 @@
 ### Delete a person
-DELETE http://localhost:3001/api/persons/68f9ebfcf7fd88b93e5fcd2b
+DELETE https://phone-book-backend-dlis.onrender.com/api/persons/68fb1b43fc8490c29b736331
 
 ###
-POST  http://localhost:3001/api/persons
+POST  https://phone-book-backend-dlis.onrender.com/api/persons
 Content-Type: application/json
 
 {
-  "name": "ma",
-  "number": "12"
+  "name": "maddy-2",
+  "number": "12666"
 }
 
 ### Get all persons
-GET http://localhost:3001/api/persons
+GET https://phone-book-backend-dlis.onrender.com/api/persons
 
 ### Get all persons id
-GET http://localhost:3001/api/persons/68f9e94005e90cd45f00d2d1
+GET https://phone-book-backend-dlis.onrender.com/api/persons/68fa29dbff2e8b2e95d74eec
 
 ### update a person
-PUT  http://localhost:3001/api/persons/68fa25937b7756316435bd1e
+PUT  https://phone-book-backend-dlis.onrender.com/api/persons/68fa29dbff2e8b2e95d74eec
 Content-Type: application/json
 
 {
